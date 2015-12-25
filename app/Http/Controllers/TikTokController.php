@@ -7,8 +7,7 @@
  */
 
 namespace App\Http\Controllers;
-use App\Repositories\MondovoRepository;
-use PDO;
+use App\Repositories\DevRepository;
 use App\Repositories\FirebirdRepository;
 
 class TikTokController extends Controller
@@ -16,19 +15,19 @@ class TikTokController extends Controller
 
     protected $fb_repository;
 
-    protected $mondovo_repository;
+    protected $dev_repository;
 
     public function __construct()
     {
         $this->fb_repository = \App::make(FirebirdRepository::class);
-        $this->mondovo_repository = \App::make(MondovoRepository::class);
+        $this->dev_repository = \App::make(DevRepository::class);
 
     }
 
     public function manage()
     {
 
-        $result = $this->mondovo_repository->getData();
+        $result = $this->dev_repository->getData();
         dd($result);
 
 

@@ -9,9 +9,8 @@
 namespace App\Repositories;
 
 use DB;
-use PDO;
 
-class MondovoRepository extends AbstractDbRepository
+class DevRepository extends AbstractDbRepository
 {
 
     public function __construct()
@@ -76,6 +75,59 @@ class MondovoRepository extends AbstractDbRepository
                     ->table('employee')
                     ->where('emp_mx_id', $emp_mx_id)
                     ->update([ 'emp_active' => $emp_active ]);
+    }
+
+    public function insertWorkTime($emp_mx_id, $work_date)
+    {
+        return DB::connection('mysql')
+                    ->table('work_time')
+                    ->insertGetId([
+                        'emp_mx_id' => $emp_mx_id,
+                        'work_date' => DB::raw('NOW()')
+                    ]);
+    }
+
+    public function getWorkTime($emp_mx_id, $work_date = '')
+    {
+        $query = DB::connection('mysql')
+                        ->table('work_time')
+                        ->where('emp_mx_id', $emp_mx_id)
+                        ->select();
+
+        if(!empty($work_date))
+            $query = $query->where('work_date', $work_date);
+
+        return $query;
+    }
+
+    public function getAbsentEmployees($work_date = '')
+    {
+        $query =  DB::connection('mysql')
+                    ->table('work_time')
+                    ->where('number_ins', 0)
+                    ->select();
+
+        if(!empty($work_date))
+            $query = $query->where('work_date', $work_date);
+        else
+            $query = $query->where('work_date', DB::raw('NOW()'));
+
+        return $query;
+    }
+
+    public function getPresentEmployees($work_date = '')
+    {
+        $query =  DB::connection('mysql')
+            ->table('work_time')
+            ->where('number_ins', '>', 0)
+            ->select();
+
+        if(!empty($work_date))
+            $query = $query->where('work_date', $work_date);
+        else
+            $query = $query->where('work_date', DB::raw('NOW()'));
+
+        return $query;
     }
 
 
