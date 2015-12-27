@@ -7,8 +7,8 @@
  */
 
 namespace App\Http\Controllers;
-use App\Repositories\DevRepository;
-use App\Repositories\FirebirdRepository;
+use App\Contracts\Repositories\DevRepositoryInterface;
+use App\Contracts\Repositories\FirebirdRepositoryInterface;
 
 class TikTokController extends Controller
 {
@@ -17,23 +17,23 @@ class TikTokController extends Controller
 
     protected $dev_repository;
 
-    public function __construct()
+    public function __construct(FirebirdRepositoryInterface $fb_repository, DevRepositoryInterface $dev_repository)
     {
-        $this->fb_repository = \App::make(FirebirdRepository::class);
-        $this->dev_repository = \App::make(DevRepository::class);
+        $this->fb_repository = $fb_repository;
+        $this->dev_repository = $dev_repository;
 
     }
 
     public function manage()
     {
 
-        $result = $this->dev_repository->getData();
-        dd($result);
+        //$result = $this->dev_repository->getData();
+        //dd($result);
 
 
         $query = "select * from employee";
         $result = $this->fb_repository->executeGetQuery($query);
-//dd($result);
+
         $a = [];
         foreach($result as $value)
         {

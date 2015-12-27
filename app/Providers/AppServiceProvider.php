@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('App\Contracts\Repositories\FirebirdRepositoryInterface', 'App\Repositories\FirebirdRepository');
+        $this->app->bind('App\Contracts\Repositories\DevRepositoryInterface', 'App\Repositories\DevRepository');
     }
 }

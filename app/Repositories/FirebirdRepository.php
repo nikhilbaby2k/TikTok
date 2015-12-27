@@ -8,10 +8,10 @@
 
 namespace App\Repositories;
 
-use DB;
+use App\Contracts\Repositories\FirebirdRepositoryInterface;
 use PDO;
 
-class FirebirdRepository extends AbstractDbRepository
+class FirebirdRepository extends AbstractDbRepository implements FirebirdRepositoryInterface
 {
 
     protected $connection_string = "firebird:dbname=localhost:C:\\Users\\Nikhil\\Desktop\\Proj\\ITAS.FDB;host=localhost";
@@ -36,5 +36,20 @@ class FirebirdRepository extends AbstractDbRepository
         $result->execute();
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function executeInsertQuery($query)
+    {
+        $count = $this->firebird_handle->exec($query);
+        $insert_id = $this->firebird_handle->lastInsertId();
+        return $insert_id;
+    }
+
+    public function executeUpdateQuery($query)
+    {
+        $count = $this->firebird_handle->exec($query);
+        return $count;
+    }
+
+
 
 }

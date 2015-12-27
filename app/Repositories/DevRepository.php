@@ -8,9 +8,10 @@
 
 namespace App\Repositories;
 
+use App\Contracts\Repositories\DevRepositoryInterface;
 use DB;
 
-class DevRepository extends AbstractDbRepository
+class DevRepository extends AbstractDbRepository implements DevRepositoryInterface
 {
 
     public function __construct()
