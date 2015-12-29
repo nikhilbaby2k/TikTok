@@ -27,8 +27,8 @@ class TikTokController extends Controller
     public function manage()
     {
 
-        //$result = $this->dev_repository->getData();
-        //dd($result);
+        $result = $this->dev_repository->getData();
+        dd($result);
 
 
         $query = "select * from employee";
