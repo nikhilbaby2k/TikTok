@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind('App\Contracts\Repositories\FirebirdRepositoryInterface', 'App\Repositories\FirebirdRepository');
         $this->app->bind('App\Contracts\Repositories\DevRepositoryInterface', 'App\Repositories\DevRepository');
+        $this->app->bind('App\Contracts\Services\TikTokServiceInterface', 'App\Services\TikTokService');
     }
 }

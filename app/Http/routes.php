@@ -16,3 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('manage', 'TikTokController@manage');
+
+Route::get('admin', function() {
+   return view('admin');
+});
