@@ -12,6 +12,8 @@ namespace App\Contracts\Repositories;
 interface DevRepositoryInterface
 {
 
+    public function getUnprocessedAttendanceRecords();
+
     public function insertAttendance($emp_mx_id, $emp_name, $punch_trg_id, $punch_datetime, $punch_type);
 
     public function getAttendance($emp_mx_id);
@@ -19,6 +21,8 @@ interface DevRepositoryInterface
     public function getAttendanceForParticularDate($emp_mx_id, $date = '');
 
     public function getEmployeeByMxId($emp_mx_id = '');
+
+    public function getAllActiveEmployees();
 
     public function getEmployeeById($emp_id = '');
 
@@ -29,6 +33,8 @@ interface DevRepositoryInterface
     public function insertWorkTime($emp_mx_id, $work_date);
 
     public function getWorkTime($emp_mx_id, $work_date = '');
+
+    public function checkWorkTimeForDate($work_date = 'NOW()');
 
     public function getAbsentEmployees($work_date = '');
 

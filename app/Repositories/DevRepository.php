@@ -32,6 +32,46 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
 
     }
 
+    public function getUnprocessedAttendanceRecords()
+    {
+        return DB::table('tik_tok_attendance')
+                        ->where('work_time_processed_status', 0)
+                        ->orderBy('punch_trg_date', 'ASC')
+                        ->select([
+                            DB::raw('distinct(punch_trg_date)')
+                        ]);
+    }
+
+    public function getUnprocessedAttendanceRecordsDistinctDates()
+    {
+        return DB::table('tik_tok_attendance')
+            ->where('work_time_processed_status', 0)
+            ->orderBy('punch_trg_date', 'ASC')
+            ->select([
+                DB::raw('distinct(punch_trg_date)')
+            ]);
+    }
+
+    public function getUnprocessedAttendanceRecordsDistinctMxIdForParticularDate($punch_trg_date)
+    {
+        return DB::table('tik_tok_attendance')
+            ->where('work_time_processed_status', 0)
+            ->where('punch_trg_date', $punch_trg_date)
+            ->select([
+                DB::raw('distinct(emp_mx_id)')
+            ]);
+    }
+
+    public function getUnprocessedAttendanceRecordsForDateAndMxId($particular_date, $emp_mx_id)
+    {
+        return DB::table('tik_tok_attendance')
+            ->where('work_time_processed_status', 0)
+            ->where('punch_trg_date', $particular_date)
+            ->where('emp_mx_id', $emp_mx_id)
+            ->orderBy('punch_trg_id', 'ASC')
+            ->select();
+    }
+
     public function insertAttendance($emp_mx_id, $emp_name, $punch_trg_id, $punch_datetime, $punch_type)
     {
         return DB::connection('mysql')->table('tik_tok_attendance')
@@ -95,6 +135,16 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
         return $query;
     }
 
+    public function getAllActiveEmployees()
+    {
+        $query = DB::connection('mysql')
+            ->table('tik_tok_employee')
+            ->where('emp_active', 'Active')
+            ->select();
+
+        return $query;
+    }
+
     public function insertEmployee($emp_id, $emp_mx_id, $emp_fullname, $emp_active, $emp_date_of_join)
     {
         return DB::connection('mysql')
@@ -117,12 +167,21 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
 
     public function insertWorkTime($emp_mx_id, $work_date)
     {
-        return DB::connection('mysql')
-                    ->table('tik_tok_work_time')
-                    ->insertGetId([
-                        'emp_mx_id' => $emp_mx_id,
-                        'work_date' => DB::raw('NOW()')
+        if($work_date ==- 'NOW()')
+            return DB::connection('mysql')
+                        ->table('tik_tok_work_time')
+                        ->insertGetId([
+                            'emp_mx_id' => $emp_mx_id,
+                            'work_date' => DB::raw('NOW()')
                     ]);
+
+        else
+            return DB::connection('mysql')
+                ->table('tik_tok_work_time')
+                ->insertGetId([
+                    'emp_mx_id' => $emp_mx_id,
+                    'work_date' => $work_date
+                ]);
     }
 
     public function getWorkTime($emp_mx_id, $work_date = '')
@@ -133,6 +192,20 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
                         ->select();
 
         if(!empty($work_date))
+            $query = $query->where('work_date', $work_date);
+
+        return $query;
+    }
+
+    public function checkWorkTimeForDate($work_date = 'NOW()')
+    {
+        $query = DB::connection('mysql')
+            ->table('tik_tok_work_time')
+            ->select();
+
+        if($work_date === 'NOW()')
+            $query = $query->where('work_date', DB::raw('CURDATE()'));
+        else
             $query = $query->where('work_date', $work_date);
 
         return $query;
@@ -166,6 +239,12 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
             $query = $query->where('work_date', DB::raw('NOW()'));
 
         return $query;
+    }
+
+    public function getActiveDevices()
+    {
+        return DB::table('tik_tok_punch_devices')
+                    ->select();
     }
 
 

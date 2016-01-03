@@ -2,7 +2,7 @@
     <!-- small box -->
     <div class="small-box bg-wood">
         <div class="inner">
-            <h3 id="count_device">5256 </h3>
+            <h3 id="count_device">{{$active_devices}}</h3>
             <p> Active Devices </p>
         </div>
         <div class="icon"> <i class="fa fa-desktop"></i> </div>

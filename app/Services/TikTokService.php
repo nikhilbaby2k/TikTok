@@ -44,28 +44,16 @@ class TikTokService implements TikTokServiceInterface
                 try{
                     $specific_punch_details = $this->fetchSpecificPunchDetails($new_attendance_records_item['TRG_ID']);
                     $inserted_punch_detail[] = $this->insertNewPunchDetailsIntoDevDb($specific_punch_details[0]);
-
-                    if($specific_punch_details[0]['PUNCH_TYPE'] === 'Out')
-                    {
-                        //$this->updateWorkTimeInDevDb($specific_punch_details[0]);
-                    }
-
-                    //$this->updateProcessedStatusInTrgIdBaseForRecords($new_attendance_records_item['TRG_ID']);
                 }
                 catch (QueryException $e)
                 {
                     continue;
                 }
-
             }
-
-            //$this->updateProcessedStatusInTrgIdBaseForRecords($new_attendance_records);
-
             return $inserted_punch_detail;
-
         }
         else
-            return 'No New Attendance Records';
+            return -1;
 
     }
 
@@ -96,11 +84,21 @@ class TikTokService implements TikTokServiceInterface
         return $this->fb_repository->executeGetQuery($query);
     }
 
-    public function updateWorkTimeInDevDb($specific_punch_details)
+   /* public function updateWorkTimeInDevDb($specific_punch_details)
     {
         $employee_details = $this->dev_repository->getEmployeeById($specific_punch_details['TRG_EMP_ID'])->first();
         $specific_attendance_detail = $this->dev_repository->getAttendanceForParticularDate($employee_details->emp_mx_id, $specific_punch_details['TRG_DTTM'])->get();
         dd($specific_attendance_detail);
+
+    }*/
+
+    public function prepareWorkTime()
+    {
+        $unprocessed_attendance_records = $this->dev_repository->getUnprocessedAttendanceRecords()->get();
+        if(empty($unprocessed_attendance_records))
+            return 1;
+
+
 
     }
 

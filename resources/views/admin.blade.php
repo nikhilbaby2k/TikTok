@@ -26,7 +26,7 @@
 <header class="header" >
     <a href="/" class="logo">
         <!-- Add the class icon to your logo image or logo icon to add the margining -->
-        mx.TikTok.org            </a>
+        Tik - Tok</a>
 
 
     <!-- Header Navbar: style can be found in header.less -->
@@ -40,16 +40,10 @@
         </a>
         <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button" style="font-size:20px; font-weight:bold; color:#000; margin-top:0px;">
                        <span>
-
                         </span></a>
         <!-- /Sidebar toggle button-->
-        <!--
-        *******Attention new BAS national call centre number 011-27003511 operational 8AM to 8PM Mon-Sat******* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        -->
     </nav>
 </header>
-
-
 
 
 <div class="wrapper row-offcanvas row-offcanvas-left">
@@ -97,19 +91,17 @@
 
             </ul>
 
+
             <!-- search form -->
-            <!--  <form action="#" method="get" class="sidebar-form">
+            <form action="#" method="get" class="sidebar-form">
                  <div class="input-group">
                      <input type="text" name="q" class="form-control" placeholder="Find your Organization..."/>
                      <span class="input-group-btn">
-                         <button type='submit' name='seach' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+                         <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
                      </span>
                  </div>
-             </form> -->
+             </form>
             <!-- /.search form -->
-
-
-
 
         </section>
         <!-- /.sidebar -->
@@ -122,7 +114,7 @@
         <section class="content-header">
             <h1> Dashboard <small> Biometric Attendance System</small> </h1>
             <ol class="breadcrumb">
-                <li><a href="index.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             </ol>
         </section>
 
@@ -174,32 +166,15 @@
 
                 <section class="col-lg-6 connectedSortable">
                     <!-- auth response line  -->
-                    <div class="box box-success">
-                        <div class="box-header"> <i class="fa fa-rocket"></i>
-                            <h4 class="box-title">Today's Trend</h4>
-                            <div class="pull-right box-tools">
-                                <button class="btn btn-success btn-xs" data-widget='collapse' data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-                            </div><!-- /. tools -->
-                        </div>
-                        <div class="box-body">
-                            <div id="dashboard_trend" style="height: 320px;"></div>
-                        </div>
-                        <!-- /.box-body-->
-                    </div>
+                    @include('Layouts.Charts.TodaysAttendanceTrends')
                     <!-- /.box -->
-
                 </section>
-
-
-
-
 
                 <center><h6> Beta Version | E-Mail: nikhil@maximizer-e-services.com <br/>
                         &copy; 2015 mx.tiktok.org. All rights !reserved.</h6></center>
 
             </div>
             <!-- /.row -->
-
             <!-- graph section -->
 
         </section>
@@ -215,11 +190,6 @@
 <script src="assets/js/highcharts.js" type="text/javascript"></script>
 <script src="assets/js/site/countUp.min.js" type="text/javascript"></script>
 <script src="assets/js/site/dashboard.js" type="text/javascript"></script>
-
-
-
-
-
 
 <!-- add new calendar event modal -->
 

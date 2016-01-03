@@ -2,7 +2,7 @@
     <!-- small box -->
     <div class="small-box bg-grass">
         <div class="inner">
-            <h3 id="count_present">78769 </h3>
+            <h3 id="count_present">{{$employee_present_today}}</h3>
             <p> Present Today </p>
         </div>
         <div class="icon"> <i class="fa fa-user"></i> </div>

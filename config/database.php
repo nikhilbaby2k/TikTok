@@ -92,6 +92,17 @@ return [
             'password' => env('DB_FB_PASSWORD', 'masterkey'),
             'charset'  => env('DB_FB_CHARSET', 'UTF8'),
         ],
+        'mysql_dummy' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_DUMMY_HOST', 'localhost'),
+            'database'  => env('DB_DUMMY_DATABASE', 'mysql'),
+            'username'  => env('DB_DUMMY_USERNAME', 'root'),
+            'password'  => env('DB_DUMMY_PASSWORD', ''),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
 
     ],
 

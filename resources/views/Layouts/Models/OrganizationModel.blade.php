@@ -2,7 +2,7 @@
     <!-- small box -->
     <div class="small-box bg-light-blue">
         <div class="inner">
-            <h3> 616 </h3>
+            <h3> 1 </h3>
             <p> Organizations </p>
         </div>
         <div class="icon"> <i class="fa fa-building-o"></i> </div>
