@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\TikTokController;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,6 +29,11 @@ class updateDevDbAttendanceJob extends Job implements SelfHandling, ShouldQueue
      */
     public function handle()
     {
-        //
+        if ($this->attempts() > 3) {
+            $this->release(30);
+        }
+        print_r("\nAttempts: ". $this->attempts(). "\n");
+        $tik_tok_controller = \App::make(TikTokController::class);
+        $tik_tok_controller->manage();
     }
 }
