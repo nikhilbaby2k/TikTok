@@ -21,7 +21,7 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="skin-black"  onload="change_layout()">
+<body class="skin-black"  onload="">
 <!-- header logo: style can be found in header.less -->
 <header class="header" >
     <a href="/" class="logo">
@@ -156,7 +156,7 @@
                 <!-- / detailed analysis -->
 
 
-                <section class="col-lg-6 connectedSortable">
+                <section class="col-lg-6 connectedSortable left">
                     <!-- employee registration bar graph -->
                     @include('Layouts.Charts.EmployeeInTimeStatisticsPerDayChart')
                     <!-- /.box -->
@@ -170,7 +170,7 @@
                     <!-- /.box -->
                 </section>
 
-                <center><h6> Beta Version | E-Mail: nikhil@maximizer-e-services.com <br/>
+                <center><h6> Beta Version | *** Ñ *** <br/>
                         &copy; 2015 mx.tiktok.org. All rights !reserved.</h6></center>
 
             </div>
@@ -183,13 +183,6 @@
     <!-- /.right-side -->
 </div>
 <!-- ./wrapper -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/plugins/jqueryKnob/jquery.knob.js" type="text/javascript"></script>
-<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="assets/js/site/app.js" type="text/javascript"></script>
-<script src="assets/js/highcharts.js" type="text/javascript"></script>
-<script src="assets/js/site/countUp.min.js" type="text/javascript"></script>
-<script src="assets/js/site/dashboard.js" type="text/javascript"></script>
 
 <!-- add new calendar event modal -->
 

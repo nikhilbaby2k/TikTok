@@ -19,18 +19,18 @@
 
                     <div class="clearfix">
                         <span class="pull-left">Active Employees</span>
-                        <small class="pull-right">108953 / 173274</small>
+                        <small class="pull-right">{{$registered_employee_count_active}} / {{$registered_employee_count}}</small>
                     </div>
                     <div class="progress xs progress-striped active">
-                        <div class="progress-bar progress-bar-light-blue" style="width: 62%;"></div>
+                        <div class="progress-bar progress-bar-light-blue" style="width: {{intval($registered_employee_count_active*100/$registered_employee_count)}}%;"></div>
                     </div>
 
                     <div class="clearfix">
                         <span class="pull-left">Biometric Terminals</span>
-                        <small class="pull-right">1546/2170</small>
+                        <small class="pull-right">{{$active_devices}}/{{$active_devices}}</small>
                     </div>
                     <div class="progress xs progress-striped active">
-                        <div class="progress-bar progress-bar-yellow" style="width: 71%;"></div>
+                        <div class="progress-bar progress-bar-yellow" style="width: {{intval($active_devices*100/$active_devices)}}%;"></div>
                     </div>
 
                     <div class="clearfix">
@@ -58,15 +58,15 @@
     <div class="box-footer">
         <div class="row">
             <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                <h2><span class="text-orange"> 09:30 </span></h2>
+                <h2><span class="text-orange"> {{$avg['in_time']}} </span></h2>
                 <div class="knob-label">Average In-Time</div>
             </div>
             <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                <h2><span class="text-maroon"> 17:45  </span></h2>
+                <h2><span class="text-maroon"> {{$avg['out_time']}}  </span></h2>
                 <div class="knob-label">Average Out Time</div>
             </div>
             <div class="col-xs-4 text-center">
-                <h2><span class="text-teal"> 1.37 <small>sec</small> </span></h2>
+                <h2><span class="text-teal"> {{$avg['response_time']}} <small>sec</small> </span></h2>
                 <div class="knob-label">Average Response</div>
             </div><!-- ./col -->
 

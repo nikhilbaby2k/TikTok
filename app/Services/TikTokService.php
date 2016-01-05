@@ -84,24 +84,6 @@ class TikTokService implements TikTokServiceInterface
         return $this->fb_repository->executeGetQuery($query);
     }
 
-   /* public function updateWorkTimeInDevDb($specific_punch_details)
-    {
-        $employee_details = $this->dev_repository->getEmployeeById($specific_punch_details['TRG_EMP_ID'])->first();
-        $specific_attendance_detail = $this->dev_repository->getAttendanceForParticularDate($employee_details->emp_mx_id, $specific_punch_details['TRG_DTTM'])->get();
-        dd($specific_attendance_detail);
-
-    }*/
-
-    public function prepareWorkTime()
-    {
-        $unprocessed_attendance_records = $this->dev_repository->getUnprocessedAttendanceRecords()->get();
-        if(empty($unprocessed_attendance_records))
-            return 1;
-
-
-
-    }
-
 
     public function processAttendanceRecordsForWorkTime()
     {
@@ -117,7 +99,7 @@ class TikTokService implements TikTokServiceInterface
         {
             foreach($emp_mx_id_detail as $key => $emp_mx_id_detail_item)
             {
-                $emp_punch_detail = $this->dev_repository->getUnprocessedAttendanceRecordsForDateAndMxId($punch_date, $emp_mx_id_detail_item->emp_mx_id)->get();
+                //$emp_punch_detail = $this->dev_repository->getUnprocessedAttendanceRecordsForDateAndMxId($punch_date, $emp_mx_id_detail_item->emp_mx_id)->get();
 
                 $total_work_time[$punch_date][$emp_mx_id_detail_item->emp_mx_id] = $this->processWorkTime($emp_mx_id_detail_item->emp_mx_id, $punch_date );
             }

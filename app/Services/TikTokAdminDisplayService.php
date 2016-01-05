@@ -23,16 +23,27 @@ class TikTokAdminDisplayService implements TikTokAdminDisplayServiceInterface
 
     public function getViewData()
     {
+        $this->view['registered_employee_count_active'] = $this->getRegisteredActiveEmployeeCount();
         $this->view['registered_employee_count'] = $this->getRegisteredEmployeeCount();
         $this->view['employee_present_today'] = $this->getEmployeePresentTodayCount();
+
+        $this->view['avg'] = $this->getAverageEmployeeData();
+
+
         $this->view['active_devices'] = $this->getActiveDevicesCount();
         return $this->view;
 
     }
 
-    public function getRegisteredEmployeeCount()
+    public function getRegisteredActiveEmployeeCount()
     {
         $employee_count = count($this->dev_repository->getAllActiveEmployees()->get());
+        return $employee_count;
+    }
+
+    public function getRegisteredEmployeeCount()
+    {
+        $employee_count = count($this->dev_repository->getEmployeeByMxId()->get());
         return $employee_count;
     }
 
@@ -46,6 +57,19 @@ class TikTokAdminDisplayService implements TikTokAdminDisplayServiceInterface
     {
         $active_devices_count = count($this->dev_repository->getActiveDevices()->get());
         return $active_devices_count;
+    }
+
+    public function getAverageEmployeeData()
+    {
+        $in_time = $this->dev_repository->getAvgInTime()->first();
+
+        $out_time = $this->dev_repository->getAvgOutTime()->first();
+
+        return [
+          'in_time' => $in_time->avg_in_time,
+          'out_time' => $out_time->avg_out_time,
+          'response_time' => "0.0",
+        ];
     }
 
 

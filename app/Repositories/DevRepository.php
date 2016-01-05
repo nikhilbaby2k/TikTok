@@ -278,6 +278,23 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
                     ->select();
     }
 
+    public function getAvgInTime()
+    {
+        return DB::table('tik_tok_attendance')
+                ->where('punch_type', 'In')
+                ->where('first_in', 1)
+                ->where('punch_trg_date', '2015-12-30'/*DB::raw('NOW()')*/)
+                ->select(DB::raw("DATE_FORMAT(FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(punch_trg_datetime))),'%H:%i') as avg_in_time"));
+    }
+
+    public function getAvgOutTime()
+    {
+        return DB::table('tik_tok_attendance')
+            ->where('punch_type', 'Out')
+            ->where('last_out', 1)
+            ->where('punch_trg_date', '2015-12-29'/*DB::raw('NOW()')*/)
+            ->select(DB::raw(" DATE_FORMAT(FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(punch_trg_datetime))),'%H:%i') as avg_out_time"));
+    }
 
 
 

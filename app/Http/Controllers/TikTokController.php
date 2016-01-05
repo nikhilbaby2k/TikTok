@@ -52,8 +52,13 @@ class TikTokController extends Controller
 
     public function manage()
     {
+
         $processed_attendance_status = $this->processAttendance();
         print_r("\n</br>Processed Attendance Status: \n</br>". $processed_attendance_status);
+        //prepare Last Out and First In
+        $this->updateFirstIn();
+        $this->updateLastOut();
+
         $updated_work_time_details = $this->processStage_3();
         print_r("\n</br>Updated Wokr time Details: \n</br>");
         print_r($updated_work_time_details);
@@ -112,6 +117,70 @@ class TikTokController extends Controller
         return $this->tik_tok_service->processAttendanceRecordsForWorkTime();
     }
 
+    public function updateFirstIn()
+    {
+        $distinct_dates = \DB::table('tik_tok_attendance')
+                            ->where('work_time_processed_status', 0)
+                            ->select(\DB::raw('DISTINCT(punch_trg_date) '))->get();
 
+        $emp_details = $this->dev_repository->getAllActiveEmployees()->get();
+
+        foreach($distinct_dates as $distinct_date)
+        {
+            $date = $distinct_date->punch_trg_date;
+
+            foreach($emp_details as $emp_detail_item)
+            {
+                $query = \DB::table('tik_tok_attendance')
+                    ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->where('punch_trg_date', $date);
+
+                $punch_trg_id = $query->orderBy('punch_trg_datetime', 'ASC')->where('punch_type', 'In')->first();
+
+                if(empty($punch_trg_id))
+                    continue;
+
+                $query->where('punch_trg_id', $punch_trg_id->punch_trg_id)
+                    ->where('punch_type', 'In')
+                    ->update(['first_in' => 1 ]);
+            }
+
+        }
+        return 1;
+    }
+
+    public function updateLastOut()
+    {
+        $distinct_dates = \DB::table('tik_tok_attendance')
+            ->where('work_time_processed_status', 1)
+            ->select(\DB::raw('DISTINCT(punch_trg_date) '))->get();
+
+        $emp_details = $this->dev_repository->getAllActiveEmployees()->get();
+
+        foreach($distinct_dates as $distinct_date)
+        {
+            $date = $distinct_date->punch_trg_date;
+
+            foreach($emp_details as $emp_detail_item)
+            {
+                $query = \DB::table('tik_tok_attendance')
+                    ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->where('punch_trg_date', $date);
+
+                $punch_trg_id = $query->orderBy('punch_trg_datetime', 'DESC')->where('punch_type', 'Out')->first();
+
+                if(empty($punch_trg_id))
+                    continue;
+
+                $query->update([ 'last_out' => 0 ]);
+
+                $query->where('punch_trg_id', $punch_trg_id->punch_trg_id)
+                    ->where('punch_type', 'Out')
+                    ->update(['last_out' => 1 ]);
+            }
+
+        }
+        return 1;
+    }
 
 }
