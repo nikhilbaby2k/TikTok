@@ -16,6 +16,8 @@ interface DevRepositoryInterface
 
     public function insertAttendance($emp_mx_id, $emp_name, $punch_trg_id, $punch_datetime, $punch_type);
 
+    public function updateAttendanceProcessedStatus($date, $status = 1);
+
     public function getAttendance($emp_mx_id);
 
     public function getAttendanceForParticularDate($emp_mx_id, $date = '');
@@ -35,6 +37,8 @@ interface DevRepositoryInterface
     public function getWorkTime($emp_mx_id, $work_date = '');
 
     public function checkWorkTimeForDate($work_date = 'NOW()');
+
+    public function updateWorkTime($date, $emp_mx_id, $total_work_time_in_minutes, $total_out_time_in_minutes);
 
     public function getAbsentEmployees($work_date = '');
 

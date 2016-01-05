@@ -62,6 +62,13 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
             ]);
     }
 
+    public function updateAttendanceProcessedStatus($date, $status = 1)
+    {
+        return DB::table('tik_tok_attendance')
+                    ->where('punch_trg_date', $date)
+                    ->update([ 'work_time_processed_status' => $status ]);
+    }
+
     public function getUnprocessedAttendanceRecordsForDateAndMxId($particular_date, $emp_mx_id)
     {
         return DB::table('tik_tok_attendance')
@@ -111,6 +118,16 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
                            ->select();
 
         return $query;
+    }
+
+    /**
+     * @param $emp_mx_id
+     * @param $punch_date
+     * @param int $status [ 1: success; 0: Not processed]
+     */
+    public function updateProcessedStatusOfAttendanceRecords($emp_mx_id, $punch_date, $status = 1)
+    {
+
     }
 
     public function getEmployeeByMxId($emp_mx_id = '')
@@ -209,6 +226,20 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
             $query = $query->where('work_date', $work_date);
 
         return $query;
+    }
+
+    public function updateWorkTime($date, $emp_mx_id, $total_work_time_in_minutes, $total_out_time_in_minutes)
+    {
+        $total_work_time_in_minutes = $total_work_time_in_minutes * 60;
+        $total_out_time_in_minutes = $total_out_time_in_minutes * 60;
+
+        return DB::table('tik_tok_work_time')
+            ->where('work_date', '=', $date)
+            ->where('emp_mx_id', '=', $emp_mx_id)
+            ->update([
+                'total_work_time' => DB::raw("SEC_TO_TIME($total_work_time_in_minutes)"),
+                'total_out_time' => DB::raw("SEC_TO_TIME($total_out_time_in_minutes)")
+            ]);
     }
 
     public function getAbsentEmployees($work_date = '')

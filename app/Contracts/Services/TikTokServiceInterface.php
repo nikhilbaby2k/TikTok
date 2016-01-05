@@ -16,4 +16,6 @@ interface TikTokServiceInterface
      */
     public function processAttendance();
 
+    public function processAttendanceRecordsForWorkTime();
+
 }
