@@ -11,28 +11,43 @@
     </div>
     <!-- /.box-body-->
 </div>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="http://code.highcharts.com/highcharts.js"></script>
+
 <script language="JavaScript">
     $(document).ready(function() {
+
         var chart = {
             type: 'spline',
             animation: Highcharts.svg, // don't animate in IE < IE 10.
             marginRight: 10,
             events: {
                 load: function () {
+
+                    var data_for_chart = 0;
+
                     // set up the updating of the chart each second
                     var series = this.series[0];
                     setInterval(function () {
-                        var x = (new Date()).getTime(), // current time
-                                y = Math.random();
+                        var x = (new Date()).getTime(); // current time
+                        var  y =  Math.abs(data_for_chart);
+
                         series.addPoint([x, y], true, true);
-                    }, 1000);
+
+                        $.ajax({
+                            type: "POST",
+                            url : "{{ route('live_attendance_data_ajax')  }}",
+                            data : { '_token': "{{ csrf_token()  }}" },
+                            success : function(data){
+
+                                data_for_chart = data;
+                            }
+                        });
+
+                    }, 5000);
                 }
             }
         };
         var title = {
-            text: 'Live random data'
+            text: ''
         };
         var xAxis = {
             type: 'datetime',
@@ -40,7 +55,7 @@
         };
         var yAxis = {
             title: {
-                text: 'Value'
+                text: 'Employees Present in Office'
             },
             plotLines: [{
                 value: 0,
@@ -51,8 +66,8 @@
         var tooltip = {
             formatter: function () {
                 return '<b>' + this.series.name + '</b><br/>' +
-                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                        Highcharts.numberFormat(this.y, 2);
+                        Highcharts.dateFormat('%A %H:%M:%S', this.x) + '<br/>' +
+                        'Present: ' + Highcharts.numberFormat(this.y, 0);
             }
         };
         var plotOptions = {
@@ -77,14 +92,15 @@
             enabled: false
         };
         var series= [{
-            name: 'Random data',
+            name: 'Live Attendance Data',
             data: (function () {
+
                 // generate an array of random data
                 var data = [],time = (new Date()).getTime(),i;
-                for (i = -19; i <= 0; i += 1) {
+                for (i = 0; i < 10; i++ ) {
                     data.push({
-                        x: time + i * 1000,
-                        y: Math.random()
+                        x: time + i * 500,
+                        y: 0
                     });
                 }
                 return data;
@@ -111,4 +127,7 @@
         $('#container').highcharts(json);
 
     });
+
+
+
 </script>

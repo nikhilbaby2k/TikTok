@@ -18,3 +18,6 @@ Route::get('/', function () {
 Route::get('manage', 'TikTokController@manage');
 
 Route::get('admin', ['as'=>'admin_get', 'uses'=>'TikTokController@admin'] );
+
+Route::post('live-attendance-data', ['as'=>'live_attendance_data_ajax', 'uses'=>'TikTokController@liveAttendanceData'] );
+Route::post('in-time-statistics', ['as'=>'in_time_statistics_ajax', 'uses'=>'TikTokController@inTimeStatisticsData'] );

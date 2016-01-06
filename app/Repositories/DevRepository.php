@@ -283,7 +283,7 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
         return DB::table('tik_tok_attendance')
                 ->where('punch_type', 'In')
                 ->where('first_in', 1)
-                ->where('punch_trg_date', '2015-12-30'/*DB::raw('NOW()')*/)
+                ->where('punch_trg_date', '2015-12-30'/*DB::raw('CURDATE()')*/)
                 ->select(DB::raw("DATE_FORMAT(FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(punch_trg_datetime))),'%H:%i') as avg_in_time"));
     }
 
@@ -292,8 +292,28 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
         return DB::table('tik_tok_attendance')
             ->where('punch_type', 'Out')
             ->where('last_out', 1)
-            ->where('punch_trg_date', '2015-12-29'/*DB::raw('NOW()')*/)
+            ->where('punch_trg_date', '2015-12-29'/*DB::raw('CURDATE()')*/)
             ->select(DB::raw(" DATE_FORMAT(FROM_UNIXTIME(AVG(UNIX_TIMESTAMP(punch_trg_datetime))),'%H:%i') as avg_out_time"));
+    }
+
+
+    public function getAttandanceDataForTimeBetween($start_time, $end_time, $date = '')
+    {
+        $query = DB::table('tik_tok_attendance')
+                    ->where('work_time_processed_status', 1)
+                    ->where('first_in', 1);
+
+        if(empty($date))
+            $query = $query->where('punch_trg_date', DB::raw('CURDATE()'));
+        else
+            $query = $query->where('punch_trg_date', $date);
+
+        if(empty($end_time))
+            $query = $query->where(DB::raw("TIME_FORMAT(punch_trg_datetime, '%H:%i')"), '>=', $start_time );
+        else
+            $query = $query->whereBetween(DB::raw("TIME_FORMAT(punch_trg_datetime, '%H:%i')"), [ $start_time, $end_time ] );
+
+        return $query;
     }
 
 

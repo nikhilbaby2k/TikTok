@@ -1,3 +1,6 @@
+@extends('Layouts.MainCommonElements.app')
+
+@section('content')
 <!DOCTYPE html>
 <html>
 
@@ -120,7 +123,8 @@
 
         <!-- Main content -->
         <section class="content">
-
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/highcharts.js"></script>
             <!-- Small boxes (Stat box) top statistics shorts -->
             <div class="row">
                 @include('Layouts.Models.OrganizationModel')
@@ -170,7 +174,7 @@
                     <!-- /.box -->
                 </section>
 
-                <center><h6> Beta Version | *** Ñ *** <br/>
+                <center><h6> Beta Version | ♦♦ ñi ♦♦ <br/>
                         &copy; 2015 mx.tiktok.org. All rights !reserved.</h6></center>
 
             </div>
@@ -189,3 +193,4 @@
 </body>
 <!-- Mirrored from attendance.gov.in/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 28 Dec 2015 16:39:07 GMT -->
 </html>
+@endsection

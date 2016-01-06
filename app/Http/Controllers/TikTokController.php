@@ -35,6 +35,16 @@ class TikTokController extends Controller
      */
     protected $admin_display_service;
 
+    const TIME_ARRAY_FORMAT = [
+            'Before 8:30' => [ 'from' => '08:00', 'to' => '08:30' ],
+            '8:30 - 9:00' => [ 'from' => '08:30', 'to' => '09:00' ],
+            '9:00 - 9:30' => [ 'from' => '09:00', 'to' => '09:30' ],
+            '9:30 - 10:00' => [ 'from' => '09:30', 'to' => '10:00' ],
+            '10:00 - 10:30' => [ 'from' => '10:00', 'to' => '10:30' ],
+            '10:30 - 11:00' => [ 'from' => '10:30', 'to' => '11:00' ],
+            'After 11:00' => [ 'from' => '11:00', 'to' => '' ],
+            ];
+
 
     public function __construct(FirebirdRepositoryInterface $fb_repository, DevRepositoryInterface $dev_repository, TikTokServiceInterface $tik_tok_service, TikTokAdminDisplayServiceInterface $admin_display_service)
     {
@@ -47,6 +57,8 @@ class TikTokController extends Controller
     public function admin()
     {
         $this->view = $this->admin_display_service->getViewData();
+
+        $this->view['in_time_statistics_data'] = $this->inTimeStatisticsData();
         return view('admin', $this->view);
     }
 
@@ -67,6 +79,8 @@ class TikTokController extends Controller
 
     public function processAttendance()
     {
+        $this->inTimeStatisticsData();
+
         $inserted_punch_detail = $this->processStage_1();
         if(is_array($inserted_punch_detail))
         {
@@ -135,6 +149,12 @@ class TikTokController extends Controller
                     ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
                     ->where('punch_trg_date', $date);
 
+                $count_of_ins = $query->where('punch_type', 'In')->count();
+                $count_of_outs = $query->where('punch_type', 'Out')->count();
+
+                \DB::table('tik_tok_work_time')->where('work_date', $date)->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->update([ 'number_ins' => $count_of_ins, 'number_outs' => $count_of_outs ]);
+
                 $punch_trg_id = $query->orderBy('punch_trg_datetime', 'ASC')->where('punch_type', 'In')->first();
 
                 if(empty($punch_trg_id))
@@ -152,7 +172,7 @@ class TikTokController extends Controller
     public function updateLastOut()
     {
         $distinct_dates = \DB::table('tik_tok_attendance')
-            ->where('work_time_processed_status', 1)
+            ->where('work_time_processed_status', 0)
             ->select(\DB::raw('DISTINCT(punch_trg_date) '))->get();
 
         $emp_details = $this->dev_repository->getAllActiveEmployees()->get();
@@ -181,6 +201,32 @@ class TikTokController extends Controller
 
         }
         return 1;
+    }
+
+
+    public function liveAttendanceData()
+    {
+        $current_present_employees = count($this->dev_repository->getPresentEmployees('2015-12-29')->get());
+        return $current_present_employees;
+    }
+
+    public function inTimeStatisticsData()
+    {
+
+        foreach(self::TIME_ARRAY_FORMAT as $index_name => $index_from_to_values)
+        {
+            $data_for_pi_chart[$index_name] = $this->dev_repository->getAttandanceDataForTimeBetween($index_from_to_values['from'], $index_from_to_values['to'], '2015-12-29')->count();
+
+        }
+
+        $sum_of_values = array_sum(array_values($data_for_pi_chart));
+
+        foreach($data_for_pi_chart as $index => $integer_value)
+        {
+            $data_for_pi_chart[$index] = number_format(($integer_value*100/$sum_of_values), 1 );
+        }
+
+        return  $data_for_pi_chart ;
     }
 
 }

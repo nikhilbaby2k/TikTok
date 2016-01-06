@@ -209,4 +209,10 @@ class TikTokService implements TikTokServiceInterface
     }
 
 
+    public function generateOptionsForInTimeStatistics()
+    {
+
+    }
+
+
 }
