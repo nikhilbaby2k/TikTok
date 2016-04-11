@@ -21,7 +21,7 @@ Tik Tok is an attendance Marking application.
 
 ## Contributing
 
-Thank you for considering contributing to the TikTok framework!
+Thank you for considering contributing to the TikTok App!
 
 ## Security Vulnerabilities
 
