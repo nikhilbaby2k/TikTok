@@ -300,7 +300,7 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
     public function getAttandanceDataForTimeBetween($start_time, $end_time, $date = '')
     {
         $query = DB::table('tik_tok_attendance')
-                    ->where('work_time_processed_status', 1)
+                    ->where('work_time_processed_status', -1)
                     ->where('first_in', 1);
 
         if(empty($date))
@@ -314,6 +314,12 @@ class DevRepository extends AbstractDbRepository implements DevRepositoryInterfa
             $query = $query->whereBetween(DB::raw("TIME_FORMAT(punch_trg_datetime, '%H:%i')"), [ $start_time, $end_time ] );
 
         return $query;
+    }
+
+    public function fetchMaxPunchTrgId()
+    {
+        return DB::table('tik_tok_attendance')
+                    ->max('punch_trg_id');
     }
 
 

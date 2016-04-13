@@ -64,33 +64,23 @@ class TikTokController extends Controller
 
     public function manage()
     {
-
+        set_time_limit(600);
         $processed_attendance_status = $this->processAttendance();
-        print_r("\n</br>Processed Attendance Status: \n</br>". $processed_attendance_status);
-        //prepare Last Out and First In
+        $this->updateFirstInAndLastOut();
+        /*//prepare Last Out and First In
         $this->updateFirstIn();
         $this->updateLastOut();
 
         $updated_work_time_details = $this->processStage_3();
         print_r("\n</br>Updated Wokr time Details: \n</br>");
-        print_r($updated_work_time_details);
+        print_r($updated_work_time_details);*/
         return 1;
     }
 
     public function processAttendance()
     {
-        $this->inTimeStatisticsData();
-
-        $inserted_punch_detail = $this->processStage_1();
-        if(is_array($inserted_punch_detail))
-        {
-            $processed_status = $this->processStage_2($inserted_punch_detail);
-            if(!is_array($processed_status))
-                return 'All '. count($inserted_punch_detail) .' Processed & Good';
-            else
-                return "Only ". count($processed_status) . '/' . count($inserted_punch_detail) . " records are processed. Remaining " . count($inserted_punch_detail) - count($processed_status) . " records failed.";
-        }
-        return 'Nothing new to process';
+        $this->processStage_1();
+        return 'Processed';
     }
 
 
@@ -131,41 +121,73 @@ class TikTokController extends Controller
         return $this->tik_tok_service->processAttendanceRecordsForWorkTime();
     }
 
-    public function updateFirstIn()
+    public function updateFirstInAndLastOut()
     {
         $distinct_dates = \DB::table('tik_tok_attendance')
                             ->where('work_time_processed_status', 0)
-                            ->select(\DB::raw('DISTINCT(punch_trg_date) '))->get();
+                            ->select(\DB::raw('DISTINCT(punch_trg_date) '))->limit(5)->get();
 
         $emp_details = $this->dev_repository->getAllActiveEmployees()->get();
+        $trg_ids_first_in = [];
+        $trg_ids_last_out = [];
+        $distinct_dates_temp = [];
 
         foreach($distinct_dates as $distinct_date)
         {
             $date = $distinct_date->punch_trg_date;
+            $distinct_dates_temp[] = $date;
 
             foreach($emp_details as $emp_detail_item)
             {
-                $query = \DB::table('tik_tok_attendance')
+
+                $temp_first_in = \DB::table('tik_tok_attendance')
                     ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
-                    ->where('punch_trg_date', $date);
-
-                $count_of_ins = $query->where('punch_type', 'In')->count();
-                $count_of_outs = $query->where('punch_type', 'Out')->count();
-
-                \DB::table('tik_tok_work_time')->where('work_date', $date)->where('emp_mx_id', $emp_detail_item->emp_mx_id)
-                    ->update([ 'number_ins' => $count_of_ins, 'number_outs' => $count_of_outs ]);
-
-                $punch_trg_id = $query->orderBy('punch_trg_datetime', 'ASC')->where('punch_type', 'In')->first();
-
-                if(empty($punch_trg_id))
-                    continue;
-
-                $query->where('punch_trg_id', $punch_trg_id->punch_trg_id)
+                    ->where('punch_trg_date', $date)
                     ->where('punch_type', 'In')
-                    ->update(['first_in' => 1 ]);
+                    ->min('punch_trg_id');
+
+                if ( ! is_null($temp_first_in) )
+                $trg_ids_first_in[] = $temp_first_in;
+
+                $temp_last_out = \DB::table('tik_tok_attendance')
+                    ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->where('punch_trg_date', $date)
+                    ->where('punch_type', 'Out')
+                    ->max('punch_trg_id');
+
+                if ( ! is_null($temp_last_out) )
+                    $trg_ids_last_out[] = $temp_last_out;
+
+                //$count_of_ins = $query->where('punch_type', 'In')->count();
+                //$count_of_outs = $query->where('punch_type', 'Out')->count();
+
+                /*\DB::table('tik_tok_work_time')->where('work_date', $date)->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->update([ 'number_ins' => $count_of_ins, 'number_outs' => $count_of_outs ]);*/
+
             }
 
         }
+
+        \DB::table('tik_tok_attendance')
+            ->whereIn('punch_trg_id', $trg_ids_first_in)
+            ->update([
+                'first_in' => 1
+            ]);
+
+        \DB::table('tik_tok_attendance')
+            ->whereIn('punch_trg_id', $trg_ids_last_out)
+            ->update([
+                'last_out' => 1
+            ]);
+
+        \DB::table('tik_tok_attendance')
+            ->whereIn('punch_trg_date', $distinct_dates_temp)
+            ->update([
+                'work_time_processed_status' => -1
+            ]);
+
+
+
         return 1;
     }
 
@@ -206,7 +228,7 @@ class TikTokController extends Controller
 
     public function liveAttendanceData()
     {
-        $current_present_employees = count($this->dev_repository->getPresentEmployees('2015-12-29')->get());
+        $current_present_employees = count($this->dev_repository->getPresentEmployees()->get());
         return $current_present_employees;
     }
 
@@ -215,15 +237,15 @@ class TikTokController extends Controller
 
         foreach(self::TIME_ARRAY_FORMAT as $index_name => $index_from_to_values)
         {
-            $data_for_pi_chart[$index_name] = $this->dev_repository->getAttandanceDataForTimeBetween($index_from_to_values['from'], $index_from_to_values['to'], '2015-12-29')->count();
-
+            $data_for_pi_chart[$index_name] = $this->dev_repository->getAttandanceDataForTimeBetween($index_from_to_values['from'], $index_from_to_values['to'] )->count();
         }
 
         $sum_of_values = array_sum(array_values($data_for_pi_chart));
 
+
         foreach($data_for_pi_chart as $index => $integer_value)
         {
-            $data_for_pi_chart[$index] = number_format(($integer_value*100/$sum_of_values), 1 );
+            $data_for_pi_chart[$index] =  ($sum_of_values != 0) ? number_format(($integer_value*100/$sum_of_values), 1 ) : 0;
         }
 
         return  $data_for_pi_chart ;

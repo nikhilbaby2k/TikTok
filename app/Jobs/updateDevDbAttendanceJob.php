@@ -15,7 +15,6 @@ class updateDevDbAttendanceJob extends Job implements SelfHandling, ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
      */
     public function __construct()
     {

@@ -11,4 +11,5 @@ namespace App\Contracts\Services;
 interface TikTokAdminDisplayServiceInterface
 {
 
+    public function getViewData();
 }

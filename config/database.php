@@ -54,10 +54,10 @@ return [
 
         'mysql' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', '72.52.135.251'),
+            'host'      => 'localhost',//env('DB_HOST', '72.52.135.251'),
             'database'  => env('DB_DATABASE', 'mondovo_db_dev'),
-            'username'  => env('DB_USERNAME', 'mondovo_devuser'),
-            'password'  => env('DB_PASSWORD', 'mx-e-dmlm'),
+            'username'  => 'root',//env('DB_USERNAME', 'mondovo_devuser'),
+            'password'  => '',//env('DB_PASSWORD', 'mx-e-dmlm'),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
@@ -87,7 +87,7 @@ return [
         'firebird' => [
             'driver'   => 'firebird',
             'host'     => env('DB_FB_HOST', 'localhost'),
-            'database' => env('DB_FB_DATABASE','C:/Users/Nikhil/Desktop/Proj/ITAS.FDB'),
+            'database' => env('DB_FB_DATABASE','C:/Users/Nikhil/Desktop/ITAS.FDB'),
             'username' => env('DB_FB_USERNAME', 'sysdba'),
             'password' => env('DB_FB_PASSWORD', 'masterkey'),
             'charset'  => env('DB_FB_CHARSET', 'UTF8'),

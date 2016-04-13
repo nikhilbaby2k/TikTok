@@ -14,7 +14,7 @@ use PDO;
 class FirebirdRepository extends AbstractDbRepository implements FirebirdRepositoryInterface
 {
 
-    protected $connection_string = "firebird:dbname=localhost:C:\\Users\\Nikhil\\Desktop\\Proj\\ITAS.FDB;host=localhost";
+    protected $connection_string = "firebird:dbname=localhost:C:\\Users\\Nikhil\\Desktop\\ITAS.FDB;host=localhost";
 
     protected $firebird_handle;
 

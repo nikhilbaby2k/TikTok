@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Contracts\Repositories\DevRepositoryInterface;
 use App\Contracts\Repositories\FirebirdRepositoryInterface;
 use App\Contracts\Services\TikTokServiceInterface;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 
 class TikTokService implements TikTokServiceInterface
@@ -19,6 +20,8 @@ class TikTokService implements TikTokServiceInterface
     protected $fb_repository;
 
     protected $dev_repository;
+
+    protected $employee_attendance_data;
 
     public function __construct(FirebirdRepositoryInterface $fb_repository, DevRepositoryInterface $dev_repository)
     {
@@ -35,21 +38,27 @@ class TikTokService implements TikTokServiceInterface
     {
         $new_attendance_records = [];
         $inserted_punch_detail = [];
-        $new_attendance_records = $this->checkForNewAttendanceRecord();
+        $last_dev_record = is_null($val = $this->dev_repository->fetchMaxPunchTrgId()) ? 0 : $val;
+        $new_attendance_records = $this->checkForNewAttendanceRecord($last_dev_record);
 
         if(!empty($new_attendance_records))
         {
+            $query = " INSERT INTO tik_tok_attendance(emp_mx_id, emp_name, punch_trg_id, punch_trg_datetime, punch_trg_date, punch_type) VALUES ";
+
             foreach($new_attendance_records as $new_attendance_records_item)
             {
                 try{
-                    $specific_punch_details = $this->fetchSpecificPunchDetails($new_attendance_records_item['TRG_ID']);
-                    $inserted_punch_detail[] = $this->insertNewPunchDetailsIntoDevDb($specific_punch_details[0]);
+                    //$specific_punch_details = $this->fetchSpecificPunchDetails($new_attendance_records_item['TRG_ID']);
+                    $this->insertNewPunchDetailsIntoDevDb($new_attendance_records_item);
                 }
                 catch (QueryException $e)
                 {
                     continue;
                 }
             }
+            $this->executeBulkDataToDev($query);
+
+            //$this->fb_repository->updateProcessedStatusInTrgIdBaseForRecords($new_attendance_records_item['TRG_ID']);
             return $inserted_punch_detail;
         }
         else
@@ -58,31 +67,90 @@ class TikTokService implements TikTokServiceInterface
     }
 
 
-    public function checkForNewAttendanceRecord()
+    public function checkForNewAttendanceRecord($last_dev_record)
     {
-        $query = "SELECT * FROM TRG_ID_BASE WHERE PROCESSED_STATUS = 0 OR PROCESSED_STATUS IS NULL ORDER BY TRG_ID DESC ;";
-        return $this->fb_repository->executeGetQuery($query);
-    }
-
-    public function fetchSpecificPunchDetails($trg_id)
-    {
-        $query = "SELECT TRG_ID, TRG_EMP_ID, E.EMP_FULNAME FULNAME, TRG_DTTM, LUK_VALUE PUNCH_TYPE FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID WHERE TRG_ID = $trg_id ;";
+        $query = "SELECT P.TRG_ID, P.TRG_EMP_ID, E.EMP_FULNAME FULNAME, P.TRG_DTTM, P.LUK_VALUE PUNCH_TYPE, E.EMP_ENO FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID JOIN TRG_ID_BASE as TIB ON TIB.TRG_ID = P.TRG_ID WHERE PROCESSED_STATUS = 0 OR PROCESSED_STATUS IS NULL AND TIB.TRG_ID > $last_dev_record ORDER BY P.TRG_ID ASC ";
+        //$query = "SELECT * FROM TRG_ID_BASE WHERE PROCESSED_STATUS = 0 OR PROCESSED_STATUS IS NULL AND TRG_ID > $last_dev_record  ORDER BY TRG_ID ASC ;";
         return $this->fb_repository->executeGetQuery($query);
     }
 
     public function insertNewPunchDetailsIntoDevDb($specific_punch_details)
     {
-        $employee_details = $this->dev_repository->getEmployeeById($specific_punch_details['TRG_EMP_ID'])->first();
-        //dd($employee_details);
-        $insert_result = $this->dev_repository->insertAttendance($employee_details->emp_mx_id, $employee_details->emp_fullname, $specific_punch_details['TRG_ID'], $specific_punch_details['TRG_DTTM'], $specific_punch_details['PUNCH_TYPE'] );
-        return $insert_result;
+        $this->employee_attendance_data[] = [
+            'emp_mx_id' => $specific_punch_details['EMP_ENO'],
+            'emp_name' => $specific_punch_details['FULNAME'],
+            'punch_trg_id' => $specific_punch_details['TRG_ID'],
+            'punch_trg_datetime' => $specific_punch_details['TRG_DTTM'],
+            'punch_trg_date' => $specific_punch_details['TRG_DTTM'],
+            'punch_type' => $specific_punch_details['PUNCH_TYPE']
+        ];
+        //$insert_result = $this->dev_repository->insertAttendance($employee_details->emp_mx_id, $employee_details->emp_fullname, $specific_punch_details['TRG_ID'], $specific_punch_details['TRG_DTTM'], $specific_punch_details['PUNCH_TYPE'] );
+        return true;
     }
 
     public function updateProcessedStatusInTrgIdBaseForRecords($trg_id)
     {
-        $query = " UPDATE TRG_ID_BASE SET PROCESSED_STATUS = 1 WHERE TRG_ID = $trg_id ; ";
+        $query = " UPDATE TRG_ID_BASE SET PROCESSED_STATUS = 1 WHERE TRG_ID <= $trg_id ; ";
         return $this->fb_repository->executeGetQuery($query);
     }
+
+
+    public function executeBulkDataToDev($query)
+    {
+        $insertion_string = '';
+
+        $data_chunk = array_chunk($this->employee_attendance_data, 10000);
+
+        foreach ($data_chunk as $chunk_item)
+        {
+
+            $key_value_array_count = count($chunk_item);
+
+            foreach($chunk_item as $index_number => $data_array)
+            {
+
+                if($index_number == $key_value_array_count-1)
+                {
+                    $insertion_string .= "( ". "'" . implode("','", $data_array) . "'" ." )";
+                }
+                else
+                {
+                    $insertion_string .= "( ". "'" . implode("','", $data_array) . "'" ." ),";
+                }
+
+            }
+            $query = $query . $insertion_string;
+
+            $rand = rand(10000, 99999);
+            $today = Carbon::now();
+            $file_name = $today->year.$today->month.$today->day.$today->hour.$today->minute.$today->second.$today->micro;
+            $file_name = $file_name.$rand.'.txt';
+            \Storage::disk('local')->put($file_name, $query);
+            $pdo_conn = \DB::connection('mysql')->getPdo();
+
+            try
+            {
+                $pdo_conn->exec($query);
+                \Storage::disk('local')->delete($file_name);
+                $update = " UPDATE TRG_ID_BASE SET PROCESSED_STATUS = 1 WHERE TRG_ID <= $data_array[punch_trg_id] ";
+                $this->fb_repository->executeUpdateQuery($update);
+
+            }
+            catch (\Exception $e)
+            {
+                $message = __METHOD__ .' Line: '. __LINE__. ' >> ' . $e->getMessage();
+                print_r($message);
+                exit(0);
+            }
+
+        }
+
+
+
+
+        return true;
+    }
+
 
 
     public function processAttendanceRecordsForWorkTime()

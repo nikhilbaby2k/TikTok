@@ -189,6 +189,44 @@
 <!-- ./wrapper -->
 
 <!-- add new calendar event modal -->
+<script type="text/javascript">
+    // This identifies your website in the createToken call below
+
+    jQuery(document).ready(function($){
+
+        window.setInterval(function(){
+
+            $.ajax({
+                type: "POST",
+                url : "{{ route('update_in_out_time_status')  }}",
+                data : { '_token': "{{ csrf_token()  }}" },
+                success : function(data){
+                    console.log("returned 1");
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url : "{{ route('update_attendance')  }}",
+                data : { '_token': "{{ csrf_token()  }}" },
+                success : function(data){
+                    console.log("returned 2");
+                }
+            });
+
+        }, 10000);
+
+
+
+
+
+    });
+
+
+
+
+</script>
+
 
 </body>
 <!-- Mirrored from attendance.gov.in/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 28 Dec 2015 16:39:07 GMT -->

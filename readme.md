@@ -18,6 +18,7 @@ Tik Tok is an attendance Marking application.
         ServerName mx.tiktok.org
     </VirtualHost>
 
+6. Uncomment extension=php_pdo_mysql.dll in 'php.ini' file by removing ';'
 
 ## Contributing
 
