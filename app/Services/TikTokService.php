@@ -39,6 +39,7 @@ class TikTokService implements TikTokServiceInterface
         $new_attendance_records = [];
         $inserted_punch_detail = [];
         $last_dev_record = is_null($val = $this->dev_repository->fetchMaxPunchTrgId()) ? 0 : $val;
+
         $new_attendance_records = $this->checkForNewAttendanceRecord($last_dev_record);
 
         if(!empty($new_attendance_records))
@@ -69,8 +70,10 @@ class TikTokService implements TikTokServiceInterface
 
     public function checkForNewAttendanceRecord($last_dev_record)
     {
-        $query = "SELECT P.TRG_ID, P.TRG_EMP_ID, E.EMP_FULNAME FULNAME, P.TRG_DTTM, P.LUK_VALUE PUNCH_TYPE, E.EMP_ENO FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID JOIN TRG_ID_BASE as TIB ON TIB.TRG_ID = P.TRG_ID WHERE PROCESSED_STATUS = 0 OR PROCESSED_STATUS IS NULL AND TIB.TRG_ID > $last_dev_record ORDER BY P.TRG_ID ASC ";
-        //$query = "SELECT * FROM TRG_ID_BASE WHERE PROCESSED_STATUS = 0 OR PROCESSED_STATUS IS NULL AND TRG_ID > $last_dev_record  ORDER BY TRG_ID ASC ;";
+        $query = "SELECT P.TRG_ID, P.TRG_EMP_ID, E.EMP_FULNAME FULNAME, P.TRG_DTTM, P.LUK_VALUE PUNCH_TYPE, E.EMP_ENO FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID JOIN TRG_ID_BASE as TIB ON TIB.TRG_ID = P.TRG_ID WHERE PROCESSED_STATUS = 0 AND TIB.TRG_ID > $last_dev_record OR  PROCESSED_STATUS IS NULL ORDER BY P.TRG_ID ASC ";
+
+        //$query = " select count(*) from trg_id_base where processed_status = 1 ; ";
+        //$query = " update trg_id_base set processed_status = 0 ; ";
         return $this->fb_repository->executeGetQuery($query);
     }
 
@@ -84,7 +87,7 @@ class TikTokService implements TikTokServiceInterface
             'punch_trg_date' => $specific_punch_details['TRG_DTTM'],
             'punch_type' => $specific_punch_details['PUNCH_TYPE']
         ];
-        //$insert_result = $this->dev_repository->insertAttendance($employee_details->emp_mx_id, $employee_details->emp_fullname, $specific_punch_details['TRG_ID'], $specific_punch_details['TRG_DTTM'], $specific_punch_details['PUNCH_TYPE'] );
+
         return true;
     }
 
@@ -129,11 +132,11 @@ class TikTokService implements TikTokServiceInterface
             $pdo_conn = \DB::connection('mysql')->getPdo();
 
             try
-            {
+            { 
                 $pdo_conn->exec($query);
                 \Storage::disk('local')->delete($file_name);
-                $update = " UPDATE TRG_ID_BASE SET PROCESSED_STATUS = 1 WHERE TRG_ID <= $data_array[punch_trg_id] ";
-                $this->fb_repository->executeUpdateQuery($update);
+                //$update = " UPDATE TRG_ID_BASE SET PROCESSED_STATUS = 1 WHERE TRG_ID <= $data_array[punch_trg_id] ";
+                //$this->fb_repository->executeUpdateQuery($update);
 
             }
             catch (\Exception $e)
