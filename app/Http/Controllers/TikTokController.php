@@ -79,6 +79,7 @@ class TikTokController extends Controller
 
     public function processAttendance()
     {
+        set_time_limit(600);
         $this->processStage_1();
         return 'Processed';
     }
@@ -123,6 +124,7 @@ class TikTokController extends Controller
 
     public function updateFirstInAndLastOut()
     {
+        set_time_limit(600);
         $distinct_dates = \DB::table('tik_tok_attendance')
                             ->where('work_time_processed_status', 0)
                             ->select(\DB::raw('DISTINCT(punch_trg_date) '))->limit(5)->get();
@@ -139,6 +141,12 @@ class TikTokController extends Controller
 
             foreach($emp_details as $emp_detail_item)
             {
+
+                $temp_first_in_temp = \DB::table('tik_tok_attendance')
+                    ->where('emp_mx_id', $emp_detail_item->emp_mx_id)
+                    ->where('punch_trg_date', $date)
+                    ->where('punch_type', 'In')
+                    ->min('punch_trg_id');
 
                 $temp_first_in = \DB::table('tik_tok_attendance')
                     ->where('emp_mx_id', $emp_detail_item->emp_mx_id)

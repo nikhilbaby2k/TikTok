@@ -22,5 +22,5 @@ Route::get('admin', ['as'=>'admin_get', 'uses'=>'TikTokController@admin'] );
 Route::post('live-attendance-data', ['as'=>'live_attendance_data_ajax', 'uses'=>'TikTokController@liveAttendanceData'] );
 Route::post('in-time-statistics', ['as'=>'in_time_statistics_ajax', 'uses'=>'TikTokController@inTimeStatisticsData'] );
 
-Route::post('update-in-out-time-status', ['as'=>'update_in_out_time_status', 'uses'=>'TikTokController@updateFirstInAndLastOut'] );
-Route::post('update-attendance', ['as'=>'update_attendance', 'uses'=>'TikTokController@processAttendance'] );
+Route::get('update-in-out-time-status', ['as'=>'update_in_out_time_status', 'uses'=>'TikTokController@updateFirstInAndLastOut'] );
+Route::get('update-attendance', ['as'=>'update_attendance', 'uses'=>'TikTokController@processAttendance'] );

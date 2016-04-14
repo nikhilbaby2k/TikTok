@@ -197,7 +197,7 @@
         window.setInterval(function(){
 
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url : "{{ route('update_in_out_time_status')  }}",
                 data : { '_token': "{{ csrf_token()  }}" },
                 success : function(data){
@@ -206,7 +206,7 @@
             });
 
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url : "{{ route('update_attendance')  }}",
                 data : { '_token': "{{ csrf_token()  }}" },
                 success : function(data){
@@ -214,7 +214,7 @@
                 }
             });
 
-        }, 10000);
+        }, 30000);
 
 
 
