@@ -54,10 +54,10 @@ return [
 
         'mysql' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', '72.52.135.251'),
+            'host'      => env('APP_ENV') === 'local' ? 'localhost' : env('DB_HOST', '72.52.135.251'),
             'database'  => env('DB_DATABASE', 'mondovo_db_dev'),
-            'username'  => env('DB_USERNAME', 'mondovo_devuser'),
-            'password'  => env('DB_PASSWORD', 'mx-e-dmlm'),
+            'username'  => env('APP_ENV') === 'local' ? 'root' : env('DB_USERNAME', 'mondovo_devuser'),
+            'password'  => env('APP_ENV') === 'local' ? NULL : env('DB_PASSWORD', 'mx-e-dmlm'),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
