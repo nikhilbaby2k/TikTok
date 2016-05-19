@@ -259,4 +259,9 @@ class TikTokController extends Controller
         return  $data_for_pi_chart ;
     }
 
+    public function refreshAttendHRM()
+    {
+        shell_exec("refresh.bat");
+    }
+
 }

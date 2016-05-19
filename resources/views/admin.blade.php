@@ -217,6 +217,18 @@
         }, 30000);
 
 
+        window.setInterval(function(){
+
+            $.ajax({
+                type: "GET",
+                url : "{{ route('update_attend_hrm')  }}",
+                data : { '_token': "{{ csrf_token()  }}" },
+                success : function(data){
+                    console.log("Refreshing HRM Completed.");
+                }
+            });
+
+        }, 60000); //1200000
 
 
 

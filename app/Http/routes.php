@@ -24,3 +24,4 @@ Route::post('in-time-statistics', ['as'=>'in_time_statistics_ajax', 'uses'=>'Tik
 
 Route::get('update-in-out-time-status', ['as'=>'update_in_out_time_status', 'uses'=>'TikTokController@updateFirstInAndLastOut'] );
 Route::get('update-attendance', ['as'=>'update_attendance', 'uses'=>'TikTokController@processAttendance'] );
+Route::get('update-attend-hrm', ['as'=>'update_attend_hrm', 'uses'=>'TikTokController@refreshAttendHRM'] );
