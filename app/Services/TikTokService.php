@@ -70,7 +70,7 @@ class TikTokService implements TikTokServiceInterface
 
     public function checkForNewAttendanceRecord($last_dev_record)
     {
-        $query = "SELECT P.TRG_ID, P.TRG_EMP_ID, E.EMP_FULNAME FULNAME, P.TRG_DTTM, P.LUK_VALUE PUNCH_TYPE, E.EMP_ENO FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID JOIN TRG_ID_BASE as TIB ON TIB.TRG_ID = P.TRG_ID WHERE PROCESSED_STATUS = 0 AND TIB.TRG_ID > $last_dev_record OR  PROCESSED_STATUS IS NULL ORDER BY P.TRG_ID ASC ";
+        $query = "SELECT P.TRG_ID, P.TRG_EMP_ID, E.EMP_FULNAME FULNAME, P.TRG_DTTM, P.LUK_VALUE PUNCH_TYPE, E.EMP_ENO FROM PUNCHES_CUSTOM AS P JOIN EMPLOYEE AS E ON P.TRG_EMP_ID = E.EMP_ID JOIN TRG_ID_BASE as TIB ON TIB.TRG_ID = P.TRG_ID WHERE TIB.TRG_ID > $last_dev_record ;";
 
         //$query = " select count(*) from trg_id_base where processed_status = 1 ; ";
         //$query = " update trg_id_base set processed_status = 0 ; ";
