@@ -4,3 +4,4 @@ cd "C:\xampp\htdocs\TikTok\public"
 "C:\Program Files\Java\jdk1.8.0_92\bin\java" TaskToPerform UPKEY
 "C:\Program Files\Java\jdk1.8.0_92\bin\java" TaskToPerform UPKEY
 "C:\Program Files\Java\jdk1.8.0_92\bin\java" TaskToPerform MAXENTER
+"C:\Program Files\Java\jdk1.8.0_92\bin\java" TaskToPerform 500 500
