@@ -261,7 +261,8 @@ class TikTokController extends Controller
 
     public function refreshAttendHRM()
     {
-        shell_exec("refresh.bat");
+        system("refresh.bat");
+        echo "Controller: its done.";
     }
 
 }

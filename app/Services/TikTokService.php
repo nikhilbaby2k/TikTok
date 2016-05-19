@@ -128,7 +128,7 @@ class TikTokService implements TikTokServiceInterface
             $today = Carbon::now();
             $file_name = $today->year.$today->month.$today->day.$today->hour.$today->minute.$today->second.$today->micro;
             $file_name = $file_name.$rand.'.txt';
-            \Storage::disk('local')->put($file_name, $query);
+            //\Storage::disk('local')->put($file_name, $query);
             $pdo_conn = \DB::connection('mysql')->getPdo();
 
             try
