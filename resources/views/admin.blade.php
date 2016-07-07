@@ -198,15 +198,6 @@
 
             $.ajax({
                 type: "GET",
-                url : "{{ route('update_in_out_time_status')  }}",
-                data : { '_token': "{{ csrf_token()  }}" },
-                success : function(data){
-                    console.log("returned 1");
-                }
-            });
-
-            $.ajax({
-                type: "GET",
                 url : "{{ route('update_attendance')  }}",
                 data : { '_token': "{{ csrf_token()  }}" },
                 success : function(data){
@@ -214,7 +205,7 @@
                 }
             });
 
-        }, 30000);
+        }, 30000); //30 sec
 
 
         window.setInterval(function(){
@@ -228,7 +219,7 @@
                 }
             });
 
-        }, 60000);
+        }, 600000); //10 min
 
 
 
